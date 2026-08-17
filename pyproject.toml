@@ -1,0 +1,22 @@
+[project]
+name = "rvfpa"
+version = "1.0.0"
+description = "RISC-V embedded firmware resource portrait and version difference analyzer"
+requires-python = ">=3.10"
+license = { text = "Proprietary" }
+authors = [{ name = "RVFPA Developer" }]
+dependencies = []
+
+[project.scripts]
+rvfpa = "rvfpa.cli:main"
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+packages = ["rvfpa", "rvfpa.parsers", "rvfpa.analyzers", "rvfpa.services"]
+
+[tool.setuptools.package-data]
+rvfpa = ["web/**/*"]
+

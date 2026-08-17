@@ -1,0 +1,29 @@
+{
+  "name": "RVFPA示例固件发布策略",
+  "limits": {
+    "file_bytes": "64K",
+    "code_bytes": "8K",
+    "runtime_bytes": "16K",
+    "debug_bytes": "32K"
+  },
+  "region_usage_percent": {
+    "FLASH": 80,
+    "RAM": 80
+  },
+  "allowed_abis": ["lp64"],
+  "required_extensions": ["I", "M"],
+  "forbidden_extensions": ["V"],
+  "required_sections": [".text", ".rodata"],
+  "forbidden_sections": [".note*"],
+  "max_diagnostics": {
+    "error": 0,
+    "warning": 0
+  },
+  "max_decode_failure_percent": 1,
+  "max_function_complexity": 20,
+  "forbidden_string_patterns": [
+    "password\\s*=",
+    "private[_ -]?key",
+    "BEGIN RSA PRIVATE KEY"
+  ]
+}

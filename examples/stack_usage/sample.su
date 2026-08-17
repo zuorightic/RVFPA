@@ -1,0 +1,6 @@
+firmware_v1.c:24:13:update_filter	48	static
+firmware_v1.c:41:12:classify_sample	32	static
+firmware_v1.c:58:13:record_event	64	static
+firmware_v1.c:76:5:main	144	static
+runtime.c:8:7:memset	16	static
+runtime.c:17:7:memcpy	24	static
