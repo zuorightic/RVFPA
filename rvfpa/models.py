@@ -366,7 +366,17 @@ class FirmwareDiff:
     summary: dict[str, Any]
 
     def to_dict(self) -> dict[str, Any]:
-        return to_primitive(self)
+        payload = to_primitive(self)
+        for field_name in ("size_deltas", "instruction_deltas"):
+            serialized = payload[field_name]
+            for name, delta in getattr(self, field_name).items():
+                serialized[name]["absolute"] = delta.absolute
+                serialized[name]["percent"] = delta.percent
+        for field_name in ("section_deltas", "symbol_deltas", "region_deltas"):
+            serialized = payload[field_name]
+            for item, delta in zip(serialized, getattr(self, field_name), strict=True):
+                item["delta"] = delta.delta
+        return payload
 
 
 @dataclass(slots=True)

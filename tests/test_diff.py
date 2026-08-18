@@ -35,7 +35,24 @@ class FirmwareDiffTests(unittest.TestCase):
         self.assertIn("largest_symbol_growth", self.diff.summary)
         self.assertGreater(self.diff.summary["changed_symbol_count"], 0)
 
+    def test_serialized_deltas_include_calculated_values(self) -> None:
+        payload = self.diff.to_dict()
+        file_delta = payload["size_deltas"]["file_bytes"]
+        self.assertEqual(file_delta["absolute"], file_delta["after"] - file_delta["before"])
+        self.assertIsNotNone(file_delta["percent"])
+        changed_symbol = next(
+            item for item in payload["symbol_deltas"] if item["before_size"] != item["after_size"]
+        )
+        self.assertEqual(
+            changed_symbol["delta"],
+            changed_symbol["after_size"] - changed_symbol["before_size"],
+        )
+
+    def test_extension_changes_exclude_unchanged_extensions(self) -> None:
+        self.assertEqual(self.diff.extension_changes["C"], "changed")
+        self.assertEqual(self.diff.extension_changes["I"], "changed")
+        self.assertNotIn("M", self.diff.extension_changes)
+
 
 if __name__ == "__main__":
     unittest.main()
-

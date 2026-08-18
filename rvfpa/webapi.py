@@ -44,6 +44,22 @@ def _project_payload(project: ProjectRecord) -> dict[str, Any]:
     return to_primitive(project)
 
 
+def _analysis_summary(analysis: Any) -> dict[str, Any] | None:
+    if analysis is None:
+        return None
+    payload = analysis.to_dict() if hasattr(analysis, "to_dict") else analysis
+    if not isinstance(payload, dict):
+        return None
+    identity = payload.get("identity") or {}
+    size_summary = payload.get("size_summary") or {}
+    instruction_profile = payload.get("instruction_profile") or {}
+    return {
+        "identity": {"file_name": identity.get("file_name", "")},
+        "size_summary": {"code_bytes": size_summary.get("code_bytes", 0)},
+        "instruction_profile": {"total": instruction_profile.get("total", 0)},
+    }
+
+
 def _snapshot_payload(snapshot: SnapshotRecord, include_paths: bool = False) -> dict[str, Any]:
     payload = {
         "id": snapshot.id,
@@ -51,7 +67,7 @@ def _snapshot_payload(snapshot: SnapshotRecord, include_paths: bool = False) -> 
         "version_name": snapshot.version_name,
         "notes": snapshot.notes,
         "created_at": snapshot.created_at,
-        "analysis": snapshot.analysis,
+        "analysis": _analysis_summary(snapshot.analysis),
     }
     if include_paths:
         payload["elf_path"] = snapshot.elf_path
@@ -155,7 +171,9 @@ class RVFPAApplication:
                     project_id = int(parts[2])
                     if len(parts) == 3 and method == "GET":
                         project = application.store.get_project(project_id)
-                        snapshots = application.store.list_snapshots(project_id)
+                        snapshots = application.store.list_snapshots(
+                            project_id, include_analysis=True
+                        )
                         self._send_json(
                             HTTPStatus.OK,
                             {
@@ -175,7 +193,9 @@ class RVFPAApplication:
                         self._send_json(HTTPStatus.OK, {"project": _project_payload(project)})
                         return
                     if len(parts) == 4 and parts[3] == "snapshots" and method == "GET":
-                        snapshots = application.store.list_snapshots(project_id)
+                        snapshots = application.store.list_snapshots(
+                            project_id, include_analysis=True
+                        )
                         self._send_json(
                             HTTPStatus.OK,
                             {"snapshots": [_snapshot_payload(item) for item in snapshots]},

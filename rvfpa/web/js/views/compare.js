@@ -6,21 +6,27 @@ function options(snapshots, selectedId) {
 }
 
 function deltaMetric(label, delta, formatter = formatBytes) {
-  const value = Number(delta?.absolute || 0);
-  const percent = delta?.percent;
+  const before = Number(delta?.before || 0);
+  const after = Number(delta?.after || 0);
+  const value = Number(delta?.absolute ?? after - before);
+  const percent = delta?.percent ?? (before === 0 ? (after === 0 ? null : 100) : Number((((after - before) * 100) / before).toFixed(3)));
   return `<div class="metric-card"><span class="label">${escapeHtml(label)}</span><strong class="${deltaClass(value)}">${value > 0 ? "+" : ""}${formatter(value)}</strong><small>${percent == null ? "无基线比例" : `${percent > 0 ? "+" : ""}${percent}%`}</small></div>`;
 }
 
 function symbolRows(items = []) {
-  return items.filter((item) => item.status !== "unchanged").slice(0, 100).map((item) => `
-    <tr>
-      <td><strong class="mono">${escapeHtml(item.name)}</strong></td>
-      <td><span class="badge ${item.status === "added" ? "red" : item.status === "removed" ? "green" : "amber"}">${escapeHtml(item.status)}</span></td>
-      <td class="number">${formatBytes(item.before_size)}</td>
-      <td class="number">${formatBytes(item.after_size)}</td>
-      <td class="number ${deltaClass(item.delta)}">${item.delta > 0 ? "+" : ""}${formatBytes(item.delta)}</td>
-      <td class="mono">${item.after_address == null ? "-" : formatAddress(item.after_address)}</td>
-    </tr>`).join("");
+  return items.filter((item) => item.status !== "unchanged").slice(0, 100).map((item) => {
+    const delta = Number(item.delta ?? Number(item.after_size || 0) - Number(item.before_size || 0));
+    return `
+      <tr>
+        <td><strong class="mono">${escapeHtml(item.name)}</strong></td>
+        <td><span class="badge ${item.status === "added" ? "red" : item.status === "removed" ? "green" : "amber"}">${escapeHtml(item.status)}</span></td>
+        <td class="number">${formatBytes(item.before_size)}</td>
+        <td class="number">${formatBytes(item.after_size)}</td>
+        <td class="number ${deltaClass(delta)}">${delta > 0 ? "+" : ""}${formatBytes(delta)}</td>
+        <td class="mono">${item.before_address == null ? "-" : formatAddress(item.before_address)}</td>
+        <td class="mono">${item.after_address == null ? "-" : formatAddress(item.after_address)}</td>
+      </tr>`;
+  }).join("");
 }
 
 export function render(context) {
@@ -62,7 +68,7 @@ export function render(context) {
       </section>
       <div style="height:16px"></div>
       <div class="toolbar"><strong>主要符号变化</strong><span class="spacer"></span><span>按变化量排序</span></div>
-      <div class="data-table-wrap"><table class="data-table"><thead><tr><th>符号</th><th>状态</th><th>基线大小</th><th>目标大小</th><th>变化</th><th>目标地址</th></tr></thead><tbody>${symbolRows(diff.symbol_deltas)}</tbody></table></div>
+      <div class="data-table-wrap"><table class="data-table"><thead><tr><th>符号</th><th>状态</th><th>基线大小</th><th>目标大小</th><th>变化</th><th>基线地址</th><th>目标地址</th></tr></thead><tbody>${symbolRows(diff.symbol_deltas)}</tbody></table></div>
     ` : '<div class="empty-state"><p>选择两个不同版本并开始比较。</p></div>'}`;
 }
 
@@ -91,4 +97,3 @@ export function bind(context, root) {
     }
   });
 }
-

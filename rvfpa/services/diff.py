@@ -115,7 +115,8 @@ def _extension_changes(
         else:
             before = baseline.instruction_profile.extensions.get(extension, 0)
             after = target.instruction_profile.extensions.get(extension, 0)
-            changes[extension] = "changed" if before != after else "unchanged"
+            if before != after:
+                changes[extension] = "changed"
     return changes
 
 
@@ -265,4 +266,3 @@ def compare_firmware(
         diagnostics=diagnostics,
         summary=summary,
     )
-
