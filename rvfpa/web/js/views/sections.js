@@ -1,5 +1,5 @@
 /**
- * 段布局视图：显示ELF节区的地址、大小、类型、权限和对齐，并支持筛选。
+ * 段布局页，显示ELF节区的地址、大小、类型、权限和对齐信息，并支持筛选。
  */
 
 import { escapeHtml, formatAddress, formatBytes, formatNumber } from "../format.js";

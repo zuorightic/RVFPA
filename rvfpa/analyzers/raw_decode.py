@@ -1,8 +1,8 @@
 """RISC-V可执行节区的回退指令解码器。
 
-当系统没有可用的RISC-V objdump时，本模块按操作码解码常见RV32、RV64和C扩展
-指令，并把结果关联到ELF函数符号。位域、寄存器和立即数基础规则由
-``riscv_encoding`` 提供，本模块专注于指令语义和节区遍历。
+系统没有可用的RISC-V objdump时，这里按操作码解码常见RV32、RV64和C扩展
+指令，并把结果关联到ELF函数符号。位域、寄存器和立即数规则来自
+``riscv_encoding``；本模块判断指令含义，并遍历ELF中的可执行节区。
 """
 
 from __future__ import annotations

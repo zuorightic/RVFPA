@@ -1,5 +1,5 @@
 /**
- * 指令画像视图：汇总RISC-V指令类别、扩展、CSR与同步指令，并列出解码记录。
+ * 指令画像页，汇总RISC-V指令类别、扩展、CSR和同步指令，并列出解码明细。
  */
 
 import { horizontalBars } from "../charts.js";

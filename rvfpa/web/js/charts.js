@@ -1,6 +1,6 @@
 /**
- * 轻量图表模块：用原生HTML和CSS生成内存占用条、横向统计条等图形，
- * 不依赖外部图表库。
+ * 用原生HTML和CSS绘制内存占用条及横向统计条。
+ * 图形比较简单，没有必要再引入第三方图表库。
  */
 
 import { clamp, escapeHtml, formatBytes, formatNumber, formatPercent } from "./format.js";

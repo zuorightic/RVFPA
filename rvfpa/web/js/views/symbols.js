@@ -1,5 +1,5 @@
 /**
- * 符号分析视图：按类型、绑定和来源筛选函数及对象符号，核对地址和占用大小。
+ * 符号分析页，可按类型、绑定和来源筛选函数或对象，并核对地址与占用大小。
  */
 
 import { escapeHtml, formatAddress, formatBytes, formatNumber } from "../format.js";

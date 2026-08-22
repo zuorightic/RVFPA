@@ -1,5 +1,5 @@
 /**
- * 资源总览视图：聚合固件身份、程序空间、内存区域、主要段和布局诊断。
+ * 资源总览页，放在一起查看固件身份、程序空间、内存区域、主要节区和布局诊断。
  */
 
 import { memoryRegionChart, horizontalBars } from "../charts.js";

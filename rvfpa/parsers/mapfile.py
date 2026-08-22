@@ -1,7 +1,7 @@
-"""GNU链接MAP文本解析器。
+"""解析GNU链接器生成的MAP文本。
 
-提取Memory Configuration、输出段、输入段、目标文件贡献、符号和链接警告，
-作为ELF资源画像的来源补充。
+MAP文件补充ELF中不易看出的来源信息，包括Memory Configuration、输出段、
+输入段、目标文件贡献、符号和链接警告。
 """
 
 from __future__ import annotations

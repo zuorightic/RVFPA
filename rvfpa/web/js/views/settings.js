@@ -1,5 +1,5 @@
 /**
- * 项目设置视图：维护项目说明和FLASH、RAM等内存区域配置。
+ * 内存配置页，用于修改项目说明以及FLASH、RAM等内存区域。
  */
 
 import { escapeHtml } from "../format.js";

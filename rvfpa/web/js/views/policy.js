@@ -1,5 +1,5 @@
 /**
- * 发布策略视图：编辑JSON准入规则、执行校验并展示每条规则的证据和结果。
+ * 准入策略页。用户可以编辑JSON规则、执行评估，并查看每条规则的结果和证据。
  */
 
 import { escapeHtml, formatNumber } from "../format.js";

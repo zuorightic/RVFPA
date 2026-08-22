@@ -1,6 +1,6 @@
 /**
- * 前端接口模块：统一发送项目、版本、分析、差异和报告请求，
- * 并把HTTP错误转换为页面可以集中处理的ApiError。
+ * 页面所需的项目、版本、分析、差异和报告请求都从这里发出。
+ * 请求失败时统一抛出ApiError，具体页面只需决定怎样提示用户。
  */
 
 const JSON_HEADERS = Object.freeze({ "Content-Type": "application/json" });

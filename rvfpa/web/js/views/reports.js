@@ -1,5 +1,5 @@
 /**
- * 报告中心视图：为当前固件版本提供HTML、JSON及各类CSV结果的下载入口。
+ * 报告中心页，下载当前固件版本的HTML、JSON和各类CSV分析结果。
  */
 
 import { escapeHtml } from "../format.js";
