@@ -1,3 +1,5 @@
+"""CSR、特权指令、陷阱、栅栏和原子操作使用情况分析。"""
+
 from __future__ import annotations
 
 import re

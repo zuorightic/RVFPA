@@ -1,3 +1,9 @@
+"""函数规模、复杂度和调用关系画像。
+
+把函数符号与反汇编指令关联，统计大小、指令数、分支、叶函数以及调用方和
+被调用方，为版本增长定位提供函数级依据。
+"""
+
 from __future__ import annotations
 
 import re
@@ -216,4 +222,3 @@ def function_summary(profiles: Iterable[FunctionProfile]) -> dict[str, int | flo
             (item.instruction_count for item in values), default=0
         ),
     }
-

@@ -1,3 +1,8 @@
+/**
+ * 通用界面组件：提供提示消息、模态对话框、页面标题和空状态，
+ * 供各业务视图复用一致的交互方式。
+ */
+
 import { escapeHtml } from "./format.js";
 
 const modalRoot = document.querySelector("#modal-root");
@@ -93,4 +98,3 @@ export function emptyState(title, message, action = "") {
       ${action}
     </section>`;
 }
-

@@ -1,3 +1,5 @@
+"""工作区路径、整数表达式和JSON配置读取工具。"""
+
 from __future__ import annotations
 
 import json
@@ -111,4 +113,3 @@ def normalize_memory_config(config: dict[str, Any] | None) -> dict[str, Any]:
             for item in regions
         ],
     }
-

@@ -1,3 +1,7 @@
+/**
+ * 发布检查视图：展示布局、余量、权限、解码、熵和固件内容线索的复核结果。
+ */
+
 import { horizontalBars } from "../charts.js";
 import { escapeHtml, formatAddress, formatNumber } from "../format.js";
 import { emptyState, pageHeader } from "../ui.js";
@@ -67,4 +71,3 @@ export function bind(context, root) {
   search.addEventListener("input", update);
   category.addEventListener("change", update);
 }
-

@@ -1,3 +1,8 @@
+/**
+ * 页面格式化工具：集中处理HTML转义、字节数、地址、百分比、日期和差值显示，
+ * 保证各页面使用相同口径。
+ */
+
 export function escapeHtml(value) {
   return String(value ?? "")
     .replaceAll("&", "&amp;")
@@ -75,4 +80,3 @@ export function downloadNameFromHeader(response, fallback) {
 export function clamp(value, minimum, maximum) {
   return Math.min(maximum, Math.max(minimum, Number(value || 0)));
 }
-

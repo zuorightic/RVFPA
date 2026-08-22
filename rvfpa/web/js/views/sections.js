@@ -1,3 +1,7 @@
+/**
+ * 段布局视图：显示ELF节区的地址、大小、类型、权限和对齐，并支持筛选。
+ */
+
 import { escapeHtml, formatAddress, formatBytes, formatNumber } from "../format.js";
 import { emptyState, pageHeader } from "../ui.js";
 
@@ -54,4 +58,3 @@ export function bind(context, root) {
   type.addEventListener("change", update);
   allocated.addEventListener("change", update);
 }
-

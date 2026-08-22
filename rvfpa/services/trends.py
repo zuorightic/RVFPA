@@ -1,3 +1,5 @@
+"""批量版本资源趋势、波动率、异常值和最新变化汇总。"""
+
 from __future__ import annotations
 
 import math
@@ -150,4 +152,3 @@ def build_version_trends(items: Iterable[BatchItemResult]) -> dict[str, Any]:
             if item["direction"] == "decreasing"
         ],
     }
-

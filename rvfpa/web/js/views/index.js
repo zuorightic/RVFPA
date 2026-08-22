@@ -1,3 +1,8 @@
+/**
+ * 业务视图注册表：集中声明导航名称与页面模块之间的对应关系，
+ * 由应用入口按当前状态选择渲染和绑定函数。
+ */
+
 import * as overview from "./overview.js";
 import * as versions from "./versions.js";
 import * as sections from "./sections.js";

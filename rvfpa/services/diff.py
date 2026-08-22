@@ -1,3 +1,9 @@
+"""两个固件快照的结构化版本差异计算。
+
+比较身份、体积、段、符号、内存区域、指令类别和实际扩展变化，并生成代码
+增长、RAM增长等差异诊断。
+"""
+
 from __future__ import annotations
 
 from dataclasses import fields

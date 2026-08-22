@@ -1,3 +1,8 @@
+/**
+ * 浏览器端应用入口：维护导航、导入对话框和当前页面的装载流程，
+ * 把接口、状态与各业务视图连接起来。
+ */
+
 import { api, readFileAsBase64 } from "./api.js";
 import { escapeHtml } from "./format.js";
 import { state } from "./state.js";

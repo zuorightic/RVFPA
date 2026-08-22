@@ -1,3 +1,7 @@
+/**
+ * 固件版本视图：列出项目快照，展示程序空间与指令摘要，并处理版本切换和导入。
+ */
+
 import { escapeHtml, formatBytes, formatDate, formatNumber } from "../format.js";
 import { emptyState, pageHeader } from "../ui.js";
 
@@ -36,4 +40,3 @@ export function bind(context, root) {
     });
   });
 }
-

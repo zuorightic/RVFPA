@@ -1,3 +1,7 @@
+/**
+ * 指令画像视图：汇总RISC-V指令类别、扩展、CSR与同步指令，并列出解码记录。
+ */
+
 import { horizontalBars } from "../charts.js";
 import { escapeHtml, formatAddress, formatNumber, formatPercent } from "../format.js";
 import { emptyState, pageHeader } from "../ui.js";

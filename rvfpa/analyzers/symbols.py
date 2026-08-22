@@ -1,3 +1,5 @@
+"""符号大小补全与MAP来源信息合并。"""
+
 from __future__ import annotations
 
 from collections import defaultdict
@@ -59,4 +61,3 @@ def group_symbol_sizes(symbols: list[SymbolRecord]) -> dict[str, int]:
     for symbol in symbols:
         totals[symbol.symbol_type] += symbol.size
     return dict(sorted(totals.items(), key=lambda item: item[1], reverse=True))
-

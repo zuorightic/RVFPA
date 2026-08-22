@@ -187,11 +187,18 @@ find rvfpa/web -name '*.js' -print0 | xargs -0 -n1 node --check
 RVFPA/
 ├── rvfpa/
 │   ├── analyzers/       资源、指令、函数、内容、发布和策略分析
+│   │   ├── riscv_encoding.py  RISC-V位域、寄存器和立即数规则
+│   │   └── raw_decode.py      指令语义解码与可执行节区遍历
 │   ├── parsers/         ELF、MAP、链接脚本和objdump文本解析
 │   ├── services/        分析编排、版本差异、批处理、报告和存储
+│   │   ├── stack_models.py    GCC栈使用领域模型
+│   │   ├── stack_parser.py    .su文件解析与发现
+│   │   └── stack_analysis.py  跨文件汇总与预算检查
 │   ├── web/             本地Web界面
 │   ├── cli.py           命令行入口
 │   ├── models.py        领域数据模型
+│   ├── web_payloads.py  Web响应和版本摘要转换
+│   ├── web_uploads.py   上传字段解码与边界校验
 │   └── webapi.py        HTTP接口与静态资源服务
 ├── examples/            两版真实可编译示例固件和发布策略
 ├── tests/               单元测试
@@ -200,6 +207,8 @@ RVFPA/
 └── pyproject.toml        Python项目配置
 ```
 
+主要依赖方向为`parsers → analyzers → services → cli/webapi → web界面`。解析器只负责读取输入格式，分析器形成领域结果，服务层组合业务流程，命令行和Web接口复用同一服务。此次拆分后的栈使用解析、RISC-V位域规则、Web响应转换和上传校验均可独立测试，同时保留原有导入路径。
+
 ## 数据与安全边界
 
 - Web服务默认仅监听`127.0.0.1`，不向局域网公开。
@@ -207,5 +216,4 @@ RVFPA/
 - 固件分析属于静态分析，不执行导入的ELF文件。
 - 敏感关键词和高熵结果只是人工复核线索，不等同于漏洞结论。
 - 函数复杂度是基于反汇编分支估算，不等同于源代码圈复杂度。
-
 

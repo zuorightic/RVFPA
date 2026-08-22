@@ -1,3 +1,9 @@
+"""本地SQLite项目、固件快照和压缩分析结果持久化。
+
+负责数据库建表、事务、项目配置、原始文件归档和分析JSON压缩，不参与固件
+解析和业务判定。
+"""
+
 from __future__ import annotations
 
 import json
@@ -328,4 +334,3 @@ class WorkspaceStore:
             map_path=row["map_path"],
             analysis=analysis,  # type: ignore[arg-type]
         )
-

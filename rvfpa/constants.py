@@ -1,3 +1,5 @@
+"""软件身份、默认监听地址、上传限制和分析阈值常量。"""
+
 from __future__ import annotations
 
 SOFTWARE_NAME = "RISC-V嵌入式固件资源画像与版本差异分析软件"

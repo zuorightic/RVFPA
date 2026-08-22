@@ -1,3 +1,7 @@
+/**
+ * 发布策略视图：编辑JSON准入规则、执行校验并展示每条规则的证据和结果。
+ */
+
 import { escapeHtml, formatNumber } from "../format.js";
 import { emptyState, pageHeader } from "../ui.js";
 

@@ -1,3 +1,7 @@
+/**
+ * 项目设置视图：维护项目说明和FLASH、RAM等内存区域配置。
+ */
+
 import { escapeHtml } from "../format.js";
 import { pageHeader } from "../ui.js";
 
@@ -71,4 +75,3 @@ export function bind(context, root) {
     }
   });
 }
-

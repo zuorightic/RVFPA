@@ -1,3 +1,8 @@
+/**
+ * 前端状态模块：保存当前项目、固件版本、分析结果和页面位置，
+ * 并把必要的用户选择同步到浏览器本地存储。
+ */
+
 const STORAGE_KEYS = Object.freeze({
   projectId: "rvfpa.projectId",
   snapshotByProject: "rvfpa.snapshotByProject",
@@ -110,4 +115,3 @@ class ApplicationState extends EventTarget {
 }
 
 export const state = new ApplicationState();
-

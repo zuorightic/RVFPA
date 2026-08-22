@@ -1,3 +1,10 @@
+"""RISC-V可执行节区的回退指令解码器。
+
+当系统没有可用的RISC-V objdump时，本模块按操作码解码常见RV32、RV64和C扩展
+指令，并把结果关联到ELF函数符号。位域、寄存器和立即数基础规则由
+``riscv_encoding`` 提供，本模块专注于指令语义和节区遍历。
+"""
+
 from __future__ import annotations
 
 from dataclasses import dataclass
@@ -5,100 +12,26 @@ from typing import Callable
 
 from ..models import InstructionRecord
 from ..parsers.elf import ELFDocument
-
-REGISTERS = [
-    "zero",
-    "ra",
-    "sp",
-    "gp",
-    "tp",
-    "t0",
-    "t1",
-    "t2",
-    "s0",
-    "s1",
-    "a0",
-    "a1",
-    "a2",
-    "a3",
-    "a4",
-    "a5",
-    "a6",
-    "a7",
-    "s2",
-    "s3",
-    "s4",
-    "s5",
-    "s6",
-    "s7",
-    "s8",
-    "s9",
-    "s10",
-    "s11",
-    "t3",
-    "t4",
-    "t5",
-    "t6",
-]
-
-FLOAT_REGISTERS = [f"f{index}" for index in range(32)]
+from .riscv_encoding import (
+    b_immediate as _b_immediate,
+    bits,
+    float_register,
+    i_immediate as _i_immediate,
+    j_immediate as _j_immediate,
+    register,
+    s_immediate as _s_immediate,
+    sign_extend,
+    u_immediate as _u_immediate,
+)
 
 
 @dataclass(slots=True)
 class DecodedOperation:
+    """一条解码后的助记符、操作数和识别状态。"""
+
     mnemonic: str
     operands: str
     recognized: bool = True
-
-
-def bits(value: int, start: int, length: int) -> int:
-    return (value >> start) & ((1 << length) - 1)
-
-
-def sign_extend(value: int, width: int) -> int:
-    sign = 1 << (width - 1)
-    return (value ^ sign) - sign
-
-
-def register(index: int) -> str:
-    return REGISTERS[index & 31]
-
-
-def float_register(index: int) -> str:
-    return FLOAT_REGISTERS[index & 31]
-
-
-def _i_immediate(word: int) -> int:
-    return sign_extend(bits(word, 20, 12), 12)
-
-
-def _s_immediate(word: int) -> int:
-    value = bits(word, 7, 5) | (bits(word, 25, 7) << 5)
-    return sign_extend(value, 12)
-
-
-def _b_immediate(word: int) -> int:
-    value = (
-        (bits(word, 8, 4) << 1)
-        | (bits(word, 25, 6) << 5)
-        | (bits(word, 7, 1) << 11)
-        | (bits(word, 31, 1) << 12)
-    )
-    return sign_extend(value, 13)
-
-
-def _u_immediate(word: int) -> int:
-    return word & 0xFFFFF000
-
-
-def _j_immediate(word: int) -> int:
-    value = (
-        (bits(word, 21, 10) << 1)
-        | (bits(word, 20, 1) << 11)
-        | (bits(word, 12, 8) << 12)
-        | (bits(word, 31, 1) << 20)
-    )
-    return sign_extend(value, 21)
 
 
 def _address(address: int) -> str:
@@ -301,6 +234,8 @@ def _decode_float_load_store(word: int, load: bool) -> DecodedOperation:
 
 
 def decode_32(word: int, address: int, *, rv64: bool = True) -> DecodedOperation:
+    """按32位主操作码分派并解码一条标准长度指令。"""
+
     opcode = bits(word, 0, 7)
     rd = register(bits(word, 7, 5))
     rs1 = register(bits(word, 15, 5))
@@ -367,6 +302,8 @@ def _c_branch_immediate(halfword: int) -> int:
 
 
 def decode_16(halfword: int, address: int, *, rv64: bool = True) -> DecodedOperation:
+    """按象限和funct3字段解码一条RISC-V压缩指令。"""
+
     quadrant = bits(halfword, 0, 2)
     funct3 = bits(halfword, 13, 3)
     rd = register(bits(halfword, 7, 5))
@@ -449,6 +386,8 @@ def decode_16(halfword: int, address: int, *, rv64: bool = True) -> DecodedOpera
 
 
 def decode_instruction(data: bytes, address: int, *, rv64: bool = True) -> tuple[DecodedOperation, int]:
+    """根据最低两位判断16/32位编码，并返回解码结果与指令宽度。"""
+
     if len(data) < 2:
         return DecodedOperation(".byte", data.hex(), False), len(data)
     halfword = int.from_bytes(data[:2], "little")
@@ -465,6 +404,8 @@ def decode_executable_sections(
     *,
     maximum_records: int = 200_000,
 ) -> list[InstructionRecord]:
+    """遍历ELF可执行节区，将机器码转换为带函数归属的指令记录。"""
+
     records: list[InstructionRecord] = []
     rv64 = document.identity.elf_class == 64
     symbols = sorted(
@@ -504,4 +445,3 @@ def decode_executable_sections(
             )
             cursor += width
     return records
-

@@ -1,3 +1,7 @@
+/**
+ * 函数画像视图：展示函数规模、指令量、估算复杂度、压缩率和调用关系。
+ */
+
 import { horizontalBars } from "../charts.js";
 import { escapeHtml, formatAddress, formatBytes, formatNumber, formatPercent } from "../format.js";
 import { emptyState, pageHeader } from "../ui.js";
@@ -71,4 +75,3 @@ export function bind(context, root) {
   kind.addEventListener("change", update);
   sort.addEventListener("change", update);
 }
-

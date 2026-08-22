@@ -1,3 +1,5 @@
+"""GNU链接脚本中的内存、入口和区域别名解析。"""
+
 from __future__ import annotations
 
 import ast

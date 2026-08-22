@@ -1,3 +1,9 @@
+"""RVFPA领域数据模型与通用序列化。
+
+集中定义固件身份、节区、符号、指令、函数、诊断、分析结果、版本差异和
+工作区记录，保证解析器、分析器、服务与界面共享同一数据约定。
+"""
+
 from __future__ import annotations
 
 from dataclasses import asdict, dataclass, field, is_dataclass
@@ -7,10 +13,12 @@ from typing import Any, Iterable
 
 
 def utc_now_iso() -> str:
+    """返回不含微秒的UTC时间字符串，作为工作区记录统一时间戳。"""
     return datetime.now(timezone.utc).replace(microsecond=0).isoformat()
 
 
 def to_primitive(value: Any) -> Any:
+    """递归把数据类、Path和bytes转换为可JSON序列化的基础类型。"""
     if is_dataclass(value):
         return {key: to_primitive(item) for key, item in asdict(value).items()}
     if isinstance(value, dict):
@@ -26,6 +34,7 @@ def to_primitive(value: Any) -> Any:
 
 @dataclass(slots=True)
 class FirmwareIdentity:
+    """固件文件身份、RISC-V架构和构建标识信息。"""
     file_name: str
     file_size: int
     sha256: str
@@ -292,6 +301,7 @@ class SizeSummary:
 
 @dataclass(slots=True)
 class FirmwareAnalysis:
+    """单个固件版本的完整分析聚合对象。"""
     identity: FirmwareIdentity
     segments: list[ProgramSegment]
     sections: list[SectionRecord]
@@ -352,6 +362,7 @@ class NamedDelta:
 
 @dataclass(slots=True)
 class FirmwareDiff:
+    """两个固件版本在体积、符号、节区和指令方面的差异。"""
     baseline_id: int
     target_id: int
     created_at: str
@@ -381,6 +392,7 @@ class FirmwareDiff:
 
 @dataclass(slots=True)
 class ProjectRecord:
+    """工作区中的项目元数据与项目级内存配置。"""
     id: int
     name: str
     description: str
@@ -392,6 +404,7 @@ class ProjectRecord:
 
 @dataclass(slots=True)
 class SnapshotRecord:
+    """项目下某个固件版本的输入路径、分析结果和备注。"""
     id: int
     project_id: int
     version_name: str

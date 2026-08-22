@@ -1,3 +1,9 @@
+"""节区到内存区域的映射与布局检查。
+
+根据FLASH、RAM等区域的地址、容量和权限统计占用，并诊断段越界、区域重叠
+及读写执行权限不匹配。
+"""
+
 from __future__ import annotations
 
 from collections import defaultdict
@@ -155,4 +161,3 @@ def analyze_memory_layout(
             )
         )
     return usages, diagnostics
-

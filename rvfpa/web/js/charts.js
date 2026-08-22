@@ -1,3 +1,8 @@
+/**
+ * 轻量图表模块：用原生HTML和CSS生成内存占用条、横向统计条等图形，
+ * 不依赖外部图表库。
+ */
+
 import { clamp, escapeHtml, formatBytes, formatNumber, formatPercent } from "./format.js";
 
 export function memoryRegionChart(usages = []) {
@@ -38,4 +43,3 @@ export function horizontalBars(values = {}, options = {}) {
       <div class="region-value"><strong>${formatNumber(value)}</strong><small>${formatPercent(value * 100 / Math.max(1, options.total || maximum))}</small></div>
     </div>`).join("")}</div>`;
 }
-

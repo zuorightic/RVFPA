@@ -1,3 +1,7 @@
+/**
+ * 版本对比视图：选择基线和目标快照，展示空间、节区、符号、指令扩展和地址变化。
+ */
+
 import { deltaClass, deltaText, escapeHtml, formatAddress, formatBytes, formatNumber } from "../format.js";
 import { emptyState, pageHeader } from "../ui.js";
 

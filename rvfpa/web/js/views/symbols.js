@@ -1,3 +1,7 @@
+/**
+ * 符号分析视图：按类型、绑定和来源筛选函数及对象符号，核对地址和占用大小。
+ */
+
 import { escapeHtml, formatAddress, formatBytes, formatNumber } from "../format.js";
 import { emptyState, pageHeader } from "../ui.js";
 
@@ -54,4 +58,3 @@ export function bind(context, root) {
   type.addEventListener("change", update);
   binding.addEventListener("change", update);
 }
-

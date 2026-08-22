@@ -1,3 +1,9 @@
+"""RISC-V指令归一化、分类和扩展画像。
+
+根据助记符识别指令类别及I、M、A、F、D、C、V、B、K等扩展，并统计压缩
+指令比例、助记符频次和未识别记录。
+"""
+
 from __future__ import annotations
 
 from collections import Counter
@@ -386,4 +392,3 @@ def architecture_string(base: str, profile: InstructionProfile) -> str:
     if multi:
         result += "_" + "_".join(multi)
     return result
-

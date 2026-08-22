@@ -1,3 +1,5 @@
+"""面向命令行和Web界面的统一业务异常类型。"""
+
 from __future__ import annotations
 
 
@@ -40,4 +42,3 @@ class SnapshotNotFoundError(RVFPAError):
 
 class StorageError(RVFPAError):
     code = "storage_error"
-

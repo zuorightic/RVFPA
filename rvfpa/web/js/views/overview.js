@@ -1,3 +1,7 @@
+/**
+ * 资源总览视图：聚合固件身份、程序空间、内存区域、主要段和布局诊断。
+ */
+
 import { memoryRegionChart, horizontalBars } from "../charts.js";
 import { escapeHtml, formatAddress, formatBytes, formatNumber, severityLabel } from "../format.js";
 import { emptyState, pageHeader } from "../ui.js";
@@ -84,4 +88,3 @@ export function bind(context, root) {
   root.querySelector('[data-action="demo"]')?.addEventListener("click", context.importDemo);
   root.querySelector('[data-action="switch-version"]')?.addEventListener("click", () => context.state.setView("versions"));
 }
-

@@ -1,3 +1,9 @@
+"""固件固定发布检查项。
+
+基于分析结果复核入口与布局、内存余量、段权限、调试信息、解码覆盖和内容
+线索，统一输出通过、复核或阻断状态。
+"""
+
 from __future__ import annotations
 
 from collections import Counter

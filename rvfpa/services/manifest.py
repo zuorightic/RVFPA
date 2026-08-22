@@ -1,3 +1,5 @@
+"""固件文件身份、构建信息和分析指纹追溯清单生成。"""
+
 from __future__ import annotations
 
 import hashlib
@@ -111,4 +113,3 @@ def build_firmware_manifest(
         _stable_json(fingerprint_source)
     ).hexdigest()
     return payload
-

@@ -1,3 +1,9 @@
+"""RVFPA命令行入口与子命令调度。
+
+统一提供本地Web服务、单固件分析、版本比较、批处理、链接脚本、准入策略、
+追溯清单和GCC栈使用分析命令。
+"""
+
 from __future__ import annotations
 
 import argparse
@@ -232,6 +238,7 @@ def _run_stack(args: argparse.Namespace) -> int:
 
 
 def main(argv: list[str] | None = None) -> int:
+    """解析命令行参数并分派到分析、比较、批处理等子命令。"""
     parser = _build_parser()
     args = parser.parse_args(argv)
     try:

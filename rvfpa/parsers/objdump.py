@@ -1,3 +1,5 @@
+"""GNU objdump反汇编文本的结构化解析器。"""
+
 from __future__ import annotations
 
 import re
@@ -111,4 +113,3 @@ def parse_objdump_text(text: str, *, path: Path | None = None) -> ObjdumpDocumen
             document.records[-1].address + document.records[-1].width,
         )
     return document
-

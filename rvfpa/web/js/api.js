@@ -1,3 +1,8 @@
+/**
+ * 前端接口模块：统一发送项目、版本、分析、差异和报告请求，
+ * 并把HTTP错误转换为页面可以集中处理的ApiError。
+ */
+
 const JSON_HEADERS = Object.freeze({ "Content-Type": "application/json" });
 
 export class ApiError extends Error {

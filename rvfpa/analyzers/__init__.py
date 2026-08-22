@@ -1,4 +1,4 @@
-"""Firmware analysis components."""
+"""固件分析器包，对外汇总资源、指令、函数、内容和发布检查入口。"""
 
 from .content import analyze_section_entropy, extract_firmware_strings
 from .functions import build_function_profiles

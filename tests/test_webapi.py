@@ -4,8 +4,10 @@ import tempfile
 import unittest
 from pathlib import Path
 
+from rvfpa.errors import InputValidationError
 from rvfpa.services.analysis import FirmwareAnalysisService
 from rvfpa.services.storage import WorkspaceStore
+from rvfpa.web_uploads import decode_uploaded_file
 from rvfpa.webapi import _snapshot_payload
 
 from .common import example_elf, example_map
@@ -40,6 +42,25 @@ class WebApiPayloadTests(unittest.TestCase):
                 analysis.instruction_profile.total,
             )
             self.assertNotIn("sections", payload["analysis"])
+
+
+class WebUploadTests(unittest.TestCase):
+    def test_optional_upload_fields_may_be_absent(self) -> None:
+        self.assertIsNone(decode_uploaded_file({}, "map"))
+
+    def test_uploaded_name_is_reduced_to_file_name(self) -> None:
+        result = decode_uploaded_file(
+            {"elf_name": "../firmware.elf", "elf_base64": "UklTQ1Y="},
+            "elf",
+        )
+        self.assertEqual(result, ("firmware.elf", b"RISCV"))
+
+    def test_invalid_base64_is_rejected(self) -> None:
+        with self.assertRaises(InputValidationError):
+            decode_uploaded_file(
+                {"elf_name": "firmware.elf", "elf_base64": "not@base64"},
+                "elf",
+            )
 
 
 if __name__ == "__main__":

@@ -2,6 +2,11 @@ from __future__ import annotations
 
 import unittest
 
+from rvfpa.analyzers.riscv_encoding import (
+    bits as encoding_bits,
+    i_immediate,
+    sign_extend as encoding_sign_extend,
+)
 from rvfpa.analyzers.raw_decode import (
     bits,
     decode_16,
@@ -16,6 +21,11 @@ from .common import example_elf
 
 
 class BitUtilityTests(unittest.TestCase):
+    def test_compatibility_exports_use_encoding_helpers(self) -> None:
+        self.assertIs(bits, encoding_bits)
+        self.assertIs(sign_extend, encoding_sign_extend)
+        self.assertEqual(i_immediate(0xFFF00013), -1)
+
     def test_extract_bits(self) -> None:
         self.assertEqual(bits(0b110101, 1, 3), 0b010)
         self.assertEqual(bits(0xFFFFFFFF, 16, 8), 0xFF)
@@ -101,4 +111,3 @@ class ExecutableSectionDecodeTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
-

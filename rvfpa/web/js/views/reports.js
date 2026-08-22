@@ -1,3 +1,7 @@
+/**
+ * 报告中心视图：为当前固件版本提供HTML、JSON及各类CSV结果的下载入口。
+ */
+
 import { escapeHtml } from "../format.js";
 import { emptyState, pageHeader } from "../ui.js";
 

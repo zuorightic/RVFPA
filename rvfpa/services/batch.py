@@ -1,3 +1,5 @@
+"""目录固件发现、ELF/MAP配对和并行批量分析。"""
+
 from __future__ import annotations
 
 import re

@@ -1,3 +1,5 @@
+"""RISC-V GNU工具发现、受控执行和版本记录。"""
+
 from __future__ import annotations
 
 import os
@@ -130,4 +132,3 @@ class RiscVToolchain:
         if unaligned_match:
             attributes["unaligned_access"] = unaligned_match.group(1).strip()
         return attributes
-

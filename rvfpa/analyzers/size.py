@@ -1,3 +1,5 @@
+"""ELF文件、加载镜像和运行时资源体积汇总。"""
+
 from __future__ import annotations
 
 from ..models import ProgramSegment, SectionRecord, SizeSummary
@@ -63,4 +65,3 @@ def summarize_sizes(
             result.code_bytes + result.readonly_bytes + result.initialized_data_bytes
         )
     return result
-

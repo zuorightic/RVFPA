@@ -1,4 +1,4 @@
-"""Input parsers for firmware artifacts."""
+"""固件输入解析器包，对外提供ELF、MAP和objdump文本解析入口。"""
 
 from .elf import ELFDocument, parse_elf
 from .mapfile import GNUMapDocument, parse_map_file
@@ -12,4 +12,3 @@ __all__ = [
     "parse_map_file",
     "parse_objdump_text",
 ]
-

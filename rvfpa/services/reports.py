@@ -1,3 +1,5 @@
+"""HTML、JSON和各类CSV分析报告生成。"""
+
 from __future__ import annotations
 
 import csv

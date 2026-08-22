@@ -13,6 +13,7 @@ from rvfpa.analyzers.system_usage import (
 from rvfpa.models import BatchItemResult, FirmwareCandidate, InstructionProfile, InstructionRecord
 from rvfpa.services.manifest import build_firmware_manifest
 from rvfpa.services.stack_analysis import analyze_stack_usage, parse_stack_usage_text
+from rvfpa.services.stack_parser import parse_stack_usage_text as parser_entry
 from rvfpa.services.trends import build_version_trends
 from rvfpa.services.analysis import FirmwareAnalysisService
 
@@ -65,6 +66,9 @@ class TrendAndManifestTests(unittest.TestCase):
 
 
 class StackUsageTests(unittest.TestCase):
+    def test_analysis_module_keeps_parser_compatibility_export(self) -> None:
+        self.assertIs(parse_stack_usage_text, parser_entry)
+
     def test_parser_accepts_static_and_dynamic_records(self) -> None:
         document = parse_stack_usage_text(
             "main.c:10:1:main\t128\tstatic\nmain.c:20:1:worker\t512\tdynamic,bounded\n"
@@ -72,6 +76,14 @@ class StackUsageTests(unittest.TestCase):
         self.assertEqual(len(document.records), 2)
         self.assertTrue(document.records[0].bounded)
         self.assertEqual(document.records[1].allocation, "dynamic")
+
+    def test_parser_handles_drive_letter_and_reports_unknown_qualifier(self) -> None:
+        document = parser_entry(
+            "C:/work/main.c:8:2:boot\t64\tstatic,interrupt\n"
+        )
+        self.assertEqual(document.records[0].source_path, "C:/work/main.c")
+        self.assertEqual(document.records[0].function_name, "boot")
+        self.assertIn("unknown qualifier interrupt", document.warnings[0])
 
     def test_directory_analysis_enforces_budget(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:

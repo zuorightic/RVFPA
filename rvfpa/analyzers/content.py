@@ -1,3 +1,9 @@
+"""固件字符串和节区内容特征分析。
+
+负责提取ASCII、UTF-16文本，按用途分类内容线索，并计算节区熵、零字节和
+可打印字符比例；结果只用于内容复核，不直接作漏洞结论。
+"""
+
 from __future__ import annotations
 
 import math
@@ -215,4 +221,3 @@ def analyze_section_entropy(document: ELFDocument) -> list[SectionEntropy]:
 
 def string_category_summary(strings: Iterable[FirmwareString]) -> dict[str, int]:
     return dict(Counter(item.category for item in strings).most_common())
-

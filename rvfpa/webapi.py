@@ -1,27 +1,25 @@
+"""本地Web服务与HTTP路由入口。
+
+这里负责把项目、快照、分析、版本比较、准入策略和报告下载组织为HTTP接口，
+并提供原生Web静态资源。JSON结构转换和上传文件解码分别放在独立模块中，
+使本文件专注于请求调度和业务服务调用。
+"""
+
 from __future__ import annotations
 
-import base64
-import binascii
 import json
 import mimetypes
 import shutil
 import tempfile
 import traceback
-from dataclasses import asdict, is_dataclass
 from http import HTTPStatus
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from typing import Any
 from urllib.parse import parse_qs, unquote, urlparse
 
-from .constants import (
-    MAX_UPLOAD_BYTES,
-    SOFTWARE_NAME,
-    SOFTWARE_SHORT_NAME,
-    SOFTWARE_VERSION,
-)
+from .constants import MAX_UPLOAD_BYTES, SOFTWARE_NAME, SOFTWARE_SHORT_NAME, SOFTWARE_VERSION
 from .errors import InputValidationError, RVFPAError
-from .models import ProjectRecord, SnapshotRecord, to_primitive
 from .services.analysis import FirmwareAnalysisService
 from .services.diff import compare_firmware
 from .analyzers.policy import evaluate_policy
@@ -32,57 +30,27 @@ from .services.reports import (
     diff_json_report,
 )
 from .services.storage import WorkspaceStore
-
-
-def _json_bytes(payload: Any) -> bytes:
-    return json.dumps(
-        to_primitive(payload), ensure_ascii=False, separators=(",", ":")
-    ).encode("utf-8")
-
-
-def _project_payload(project: ProjectRecord) -> dict[str, Any]:
-    return to_primitive(project)
-
-
-def _analysis_summary(analysis: Any) -> dict[str, Any] | None:
-    if analysis is None:
-        return None
-    payload = analysis.to_dict() if hasattr(analysis, "to_dict") else analysis
-    if not isinstance(payload, dict):
-        return None
-    identity = payload.get("identity") or {}
-    size_summary = payload.get("size_summary") or {}
-    instruction_profile = payload.get("instruction_profile") or {}
-    return {
-        "identity": {"file_name": identity.get("file_name", "")},
-        "size_summary": {"code_bytes": size_summary.get("code_bytes", 0)},
-        "instruction_profile": {"total": instruction_profile.get("total", 0)},
-    }
-
-
-def _snapshot_payload(snapshot: SnapshotRecord, include_paths: bool = False) -> dict[str, Any]:
-    payload = {
-        "id": snapshot.id,
-        "project_id": snapshot.project_id,
-        "version_name": snapshot.version_name,
-        "notes": snapshot.notes,
-        "created_at": snapshot.created_at,
-        "analysis": _analysis_summary(snapshot.analysis),
-    }
-    if include_paths:
-        payload["elf_path"] = snapshot.elf_path
-        payload["map_path"] = snapshot.map_path
-    return payload
-
+from .web_payloads import (
+    json_bytes as _json_bytes,
+    project_payload as _project_payload,
+    snapshot_payload as _snapshot_payload,
+)
+from .web_uploads import decode_uploaded_file
 
 class RVFPAApplication:
+    """组合工作区存储、固件分析服务和HTTP处理器。"""
+
     def __init__(self, workspace: Path):
+        """初始化本地工作区及Web静态资源目录。"""
+
         self.workspace = workspace
         self.store = WorkspaceStore(workspace)
         self.analysis_service = FirmwareAnalysisService()
         self.web_root = Path(__file__).with_name("web")
 
     def create_handler(self) -> type[BaseHTTPRequestHandler]:
+        """创建绑定当前应用实例的线程化请求处理器类型。"""
+
         application = self
 
         class Handler(BaseHTTPRequestHandler):
@@ -254,30 +222,12 @@ class RVFPAApplication:
                     raise InputValidationError("JSON request root must be an object")
                 return payload
 
-            @staticmethod
-            def _decode_file(payload: dict[str, Any], prefix: str) -> tuple[str, bytes] | None:
-                name = str(payload.get(f"{prefix}_name", "")).strip()
-                encoded = payload.get(f"{prefix}_base64")
-                if not name and not encoded:
-                    return None
-                if not name or not isinstance(encoded, str):
-                    raise InputValidationError(f"Both {prefix}_name and {prefix}_base64 are required")
-                try:
-                    content = base64.b64decode(encoded, validate=True)
-                except (binascii.Error, ValueError) as exc:
-                    raise InputValidationError(f"Invalid Base64 data for {prefix}") from exc
-                if not content:
-                    raise InputValidationError(f"Uploaded {prefix} file is empty")
-                if len(content) > MAX_UPLOAD_BYTES:
-                    raise InputValidationError(f"Uploaded {prefix} file exceeds the size limit")
-                return Path(name).name, content
-
             def _create_snapshot(self, project_id: int) -> None:
                 payload = self._read_json()
-                elf_file = self._decode_file(payload, "elf")
+                elf_file = decode_uploaded_file(payload, "elf")
                 if elf_file is None:
                     raise InputValidationError("An ELF file is required")
-                map_file = self._decode_file(payload, "map")
+                map_file = decode_uploaded_file(payload, "map")
                 project = application.store.get_project(project_id)
                 temporary = Path(tempfile.mkdtemp(prefix="upload-", dir=application.workspace))
                 try:
@@ -439,6 +389,8 @@ class RVFPAApplication:
 
 
 def serve(host: str, port: int, workspace: Path) -> None:
+    """启动本地线程化HTTP服务，并在Ctrl+C后释放监听端口。"""
+
     application = RVFPAApplication(workspace)
     server = ThreadingHTTPServer((host, port), application.create_handler())
     print(f"{SOFTWARE_NAME} {SOFTWARE_VERSION}")

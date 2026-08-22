@@ -1,3 +1,9 @@
+"""GNU链接MAP文本解析器。
+
+提取Memory Configuration、输出段、输入段、目标文件贡献、符号和链接警告，
+作为ELF资源画像的来源补充。
+"""
+
 from __future__ import annotations
 
 import re
@@ -167,4 +173,3 @@ def parse_map_file(path: str | Path) -> GNUMapDocument:
     except OSError as exc:
         raise MapParseError(f"Cannot read MAP file: {file_path}") from exc
     return parse_map_text(text, path=file_path)
-
