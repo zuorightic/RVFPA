@@ -31,7 +31,6 @@ from .toolchain import RiscVToolchain
 
 
 def _map_regions(document: GNUMapDocument | None) -> list[MemoryRegion]:
-    """把MAP文件中的内存区域转换为统一领域模型。"""
     if document is None:
         return []
     return [
@@ -48,7 +47,6 @@ def _map_regions(document: GNUMapDocument | None) -> list[MemoryRegion]:
 
 
 def _entry_point_diagnostic(document: ELFDocument) -> list[Diagnostic]:
-    """检查入口地址是否落在已分配、可执行的节区内。"""
     entry = document.identity.entry_point
     if entry == 0:
         return [
@@ -82,7 +80,6 @@ def _entry_point_diagnostic(document: ELFDocument) -> list[Diagnostic]:
 
 
 def _symbol_diagnostics(document: ELFDocument) -> list[Diagnostic]:
-    """从符号表生成重复全局符号和超大符号提示。"""
     diagnostics: list[Diagnostic] = []
     duplicate_globals: dict[str, int] = {}
     for symbol in document.symbols:
@@ -118,10 +115,8 @@ def _symbol_diagnostics(document: ELFDocument) -> list[Diagnostic]:
 
 
 class FirmwareAnalysisService:
-    """协调解析器和各分析器，生成一份完整的固件分析结果。"""
 
     def __init__(self, toolchain: RiscVToolchain | None = None):
-        """允许注入工具链，便于在不同主机或测试环境中复用服务。"""
         self.toolchain = toolchain or RiscVToolchain()
 
     def analyze(
@@ -132,7 +127,6 @@ class FirmwareAnalysisService:
         memory_config: dict[str, Any] | None = None,
         prefer_map_regions: bool = True,
     ) -> FirmwareAnalysis:
-        """分析ELF及可选MAP文件，并在objdump不可用时退回内置解码器。"""
         elf = parse_elf(elf_path)
         map_document = parse_map_file(map_path) if map_path else None
         map_regions = _map_regions(map_document)

@@ -86,7 +86,6 @@ class RawSectionHeader:
 
 @dataclass(slots=True)
 class ELFDocument:
-    """一次ELF解析的完整结果，并提供按节区读取二进制内容的方法。"""
     path: Path
     data: bytes
     header: ELFHeader
@@ -97,11 +96,10 @@ class ELFDocument:
     raw_sections: list[RawSectionHeader]
 
     def section_by_name(self, name: str) -> SectionRecord | None:
-        """按名称查找节区，不存在时返回 ``None``。"""
         return next((item for item in self.sections if item.name == name), None)
 
     def section_data(self, section: SectionRecord | str) -> bytes:
-        """读取节区文件内容；NOBITS节区没有实际文件字节。"""
+
         record = self.section_by_name(section) if isinstance(section, str) else section
         if record is None or record.nobits or record.size == 0:
             return b""
@@ -111,18 +109,16 @@ class ELFDocument:
         return self.data[record.offset:end]
 
     def executable_sections(self) -> Iterator[tuple[SectionRecord, bytes]]:
-        """依次提供可执行节区及其机器码，供内置解码器使用。"""
         for section in self.sections:
             if section.allocated and section.executable and section.size:
                 yield section, self.section_data(section)
 
     def allocated_sections(self) -> Iterator[SectionRecord]:
-        """迭代运行时会装入地址空间的非空节区。"""
         return (section for section in self.sections if section.allocated and section.size)
 
 
 class _ELFReader:
-    """在已加载的字节缓冲区上完成带边界检查的ELF结构读取。"""
+
     def __init__(self, data: bytes, path: Path):
         self.data = data
         self.path = path
@@ -144,7 +140,7 @@ class _ELFReader:
             )
 
     def parse_header(self) -> ELFHeader:
-        """识别ELF位宽和字节序，并解析通用文件头。"""
+
         if len(self.data) < 16 or self.data[:4] != ELF_MAGIC:
             raise UnsupportedFormatError(f"Not an ELF file: {self.path.name}")
         self.elf_class = self.data[4]
@@ -205,7 +201,6 @@ class _ELFReader:
         )
 
     def parse_raw_sections(self, header: ELFHeader) -> list[RawSectionHeader]:
-        """解析节区头表，并处理ELF扩展数量字段。"""
         if header.section_offset == 0:
             return []
         expected_size = 40 if header.elf_class == ELF_CLASS_32 else 64
@@ -250,7 +245,6 @@ class _ELFReader:
     def parse_sections(
         self, header: ELFHeader, raw_sections: list[RawSectionHeader]
     ) -> list[SectionRecord]:
-        """解析节区名称、权限和文件布局，生成统一节区记录。"""
         names = b""
         if raw_sections and 0 <= header.section_name_index < len(raw_sections):
             string_header = raw_sections[header.section_name_index]
@@ -477,7 +471,6 @@ def _riscv_abi(flags: int, elf_class: int) -> str:
 
 
 def parse_elf(path: str | Path) -> ELFDocument:
-    """读取并校验一个RISC-V ELF文件，返回可供分析器使用的文档对象。"""
     file_path = Path(path).expanduser().resolve()
     data = _read_file(file_path)
     reader = _ELFReader(data, file_path)

@@ -162,7 +162,7 @@ def analyze_stack_documents(
     *,
     maximum_stack_bytes: int | str | None = None,
 ) -> dict[str, Any]:
-    """汇总多个解析文档并形成函数、来源、直方图与预算结果。"""
+
     document_list = list(documents)
     records = _deduplicate(
         record
@@ -228,7 +228,6 @@ def analyze_stack_usage(
     maximum_files: int = 5000,
     maximum_stack_bytes: int | str | None = None,
 ) -> dict[str, Any]:
-    """从文件或目录开始执行完整的GCC栈使用分析流程。"""
     root_path = Path(root).expanduser().resolve()
     files = discover_stack_usage_files(
         root_path,

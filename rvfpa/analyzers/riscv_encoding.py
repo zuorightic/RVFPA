@@ -17,45 +17,35 @@ FLOAT_REGISTERS = [f"f{index}" for index in range(32)]
 
 
 def bits(value: int, start: int, length: int) -> int:
-    """从整数中提取从 ``start`` 开始的 ``length`` 个比特。"""
 
     return (value >> start) & ((1 << length) - 1)
 
 
 def sign_extend(value: int, width: int) -> int:
-    """把 ``width`` 位二进制补码扩展为Python有符号整数。"""
-
     sign = 1 << (width - 1)
     return (value ^ sign) - sign
 
 
 def register(index: int) -> str:
-    """把整数寄存器编号转换为RISC-V ABI名称。"""
-
     return REGISTERS[index & 31]
 
 
 def float_register(index: int) -> str:
-    """把浮点寄存器编号转换为 ``f0`` 至 ``f31`` 名称。"""
-
     return FLOAT_REGISTERS[index & 31]
 
 
 def i_immediate(word: int) -> int:
-    """解码I型指令的12位有符号立即数。"""
 
     return sign_extend(bits(word, 20, 12), 12)
 
 
 def s_immediate(word: int) -> int:
-    """拼接并解码S型指令的12位有符号立即数。"""
 
     value = bits(word, 7, 5) | (bits(word, 25, 7) << 5)
     return sign_extend(value, 12)
 
 
 def b_immediate(word: int) -> int:
-    """拼接并解码B型分支指令的相对偏移。"""
 
     value = (
         (bits(word, 8, 4) << 1)
@@ -67,13 +57,11 @@ def b_immediate(word: int) -> int:
 
 
 def u_immediate(word: int) -> int:
-    """提取U型指令已经位于高20位的立即数。"""
 
     return word & 0xFFFFF000
 
 
 def j_immediate(word: int) -> int:
-    """拼接并解码J型跳转指令的相对偏移。"""
 
     value = (
         (bits(word, 21, 10) << 1)

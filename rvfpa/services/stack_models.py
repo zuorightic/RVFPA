@@ -27,24 +27,19 @@ class StackUsageRecord:
 
     @property
     def source_name(self) -> str:
-        """返回不含目录的源文件名称。"""
-
         return Path(self.source_path).name
 
     @property
     def location(self) -> str:
-        """返回适合报告展示的源文件位置。"""
-
         return f"{self.source_path}:{self.line}:{self.column}"
 
     @property
     def identity(self) -> tuple[str, str, int, int]:
-        """返回去重使用的函数与源位置联合标识。"""
+
 
         return self.function_name, self.source_path, self.line, self.column
 
     def to_dict(self) -> dict[str, Any]:
-        """转换为可写入JSON报告的字典。"""
 
         return {
             "source_path": self.source_path,
@@ -63,7 +58,6 @@ class StackUsageRecord:
 
 @dataclass(slots=True)
 class StackUsageDocument:
-    """一个 ``.su`` 文件的有效记录及逐行解析警告。"""
 
     path: Path
     records: list[StackUsageRecord]
@@ -71,12 +65,10 @@ class StackUsageDocument:
 
     @property
     def maximum_stack_bytes(self) -> int:
-        """返回当前文件中最大的单函数栈占用。"""
 
         return max((item.stack_bytes for item in self.records), default=0)
 
     def to_dict(self) -> dict[str, Any]:
-        """生成包含记录、最大值和警告的文件级摘要。"""
 
         return {
             "path": str(self.path),

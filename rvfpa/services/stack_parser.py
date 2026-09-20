@@ -21,7 +21,6 @@ _KNOWN_QUALIFIERS = {"static", "dynamic", "bounded"}
 
 
 def _split_usage_line(text: str) -> tuple[str, str, str] | None:
-    """将一行栈记录拆为源位置、字节数和限定符。"""
 
     tab_fields = text.rstrip("\r\n").split("\t")
     if len(tab_fields) >= 3:
@@ -37,7 +36,6 @@ def _split_usage_line(text: str) -> tuple[str, str, str] | None:
 
 
 def _parse_location(value: str) -> tuple[str, int, int, str] | None:
-    """解析 ``路径:行:列:函数``，并兼容路径中包含冒号。"""
 
     match = _LOCATION_RE.match(value)
     if not match:
@@ -55,7 +53,6 @@ def _parse_location(value: str) -> tuple[str, int, int, str] | None:
 
 
 def _parse_qualifiers(value: str) -> tuple[str, bool, list[str], list[str]]:
-    """归一化static、dynamic和bounded限定符并返回未知项。"""
 
     qualifiers = [
         item for item in value.replace(" ", "").lower().split(",") if item
@@ -76,7 +73,6 @@ def parse_stack_usage_text(
     *,
     source_name: str = "<memory>",
 ) -> StackUsageDocument:
-    """解析 ``.su`` 文本，跳过错误行并把原因写入警告列表。"""
 
     path = Path(source_name)
     records: list[StackUsageRecord] = []
@@ -128,7 +124,6 @@ def parse_stack_usage_text(
 
 
 def parse_stack_usage_file(path: str | Path) -> StackUsageDocument:
-    """读取并解析一个 ``.su`` 文件。"""
 
     file_path = Path(path).expanduser().resolve()
     if not file_path.is_file():
@@ -154,7 +149,6 @@ def discover_stack_usage_files(
     recursive: bool = True,
     maximum_files: int = 5000,
 ) -> list[Path]:
-    """发现目录中的 ``.su`` 文件，并执行类型和数量限制。"""
 
     root_path = Path(root).expanduser().resolve()
     if root_path.is_file():

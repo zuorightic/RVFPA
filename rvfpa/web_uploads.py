@@ -19,12 +19,6 @@ def decode_uploaded_file(
     payload: dict[str, Any],
     prefix: str,
 ) -> tuple[str, bytes] | None:
-    """解析一组 ``<prefix>_name`` 与 ``<prefix>_base64`` 上传字段。
-
-    两个字段都未提供时返回 ``None``，适合MAP等可选文件；只提供其中一个字段、
-    内容不是合法Base64、文件为空或超过限制时抛出可展示给用户的校验错误。
-    """
-
     name = str(payload.get(f"{prefix}_name", "")).strip()
     encoded = payload.get(f"{prefix}_base64")
     if not name and not encoded:

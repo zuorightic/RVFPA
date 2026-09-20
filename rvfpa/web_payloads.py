@@ -13,25 +13,16 @@ from .models import ProjectRecord, SnapshotRecord, to_primitive
 
 
 def json_bytes(payload: Any) -> bytes:
-    """将领域对象转换为紧凑的UTF-8 JSON字节串。"""
-
     return json.dumps(
         to_primitive(payload), ensure_ascii=False, separators=(",", ":")
     ).encode("utf-8")
 
 
 def project_payload(project: ProjectRecord) -> dict[str, Any]:
-    """生成项目列表和项目详情共用的JSON对象。"""
-
     return to_primitive(project)
 
 
 def analysis_summary(analysis: Any) -> dict[str, Any] | None:
-    """提取版本列表所需的文件名、程序空间和指令数量。
-
-    版本列表只展示三个摘要字段，避免把段、符号和指令明细重复传给前端。
-    """
-
     if analysis is None:
         return None
     payload = analysis.to_dict() if hasattr(analysis, "to_dict") else analysis
@@ -51,8 +42,6 @@ def snapshot_payload(
     snapshot: SnapshotRecord,
     include_paths: bool = False,
 ) -> dict[str, Any]:
-    """生成快照响应；仅在详情接口明确要求时暴露工作区文件路径。"""
-
     payload = {
         "id": snapshot.id,
         "project_id": snapshot.project_id,

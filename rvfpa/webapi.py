@@ -38,8 +38,6 @@ from .web_payloads import (
 from .web_uploads import decode_uploaded_file
 
 class RVFPAApplication:
-    """组合工作区存储、固件分析服务和HTTP处理器。"""
-
     def __init__(self, workspace: Path):
         """初始化本地工作区及Web静态资源目录。"""
 
